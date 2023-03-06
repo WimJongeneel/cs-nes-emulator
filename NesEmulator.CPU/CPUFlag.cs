@@ -10,6 +10,8 @@ public enum CPUFlag : byte
     I = 1 << 2,
     // Break
     B = 1 << 4,
+    // Unused
+    U = 1 << 5,
     // Overflow
     V = 1 << 6,
     // Negative

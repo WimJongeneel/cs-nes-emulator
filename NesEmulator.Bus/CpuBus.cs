@@ -6,14 +6,15 @@ namespace NesEmulator.Bus;
 public class CpuBus : IBus
 {
 
-    private CPU6502 CPU { get; init; }
-    private List<IBusDevice> BusDevices { get; } = new();
+    public CPU6502 CPU { get; init; }
+    private List<IBusDevice> BusDevices { get; } = new()
+    {
+        new RAM()
+    };
 
     public CpuBus()
     {
         CPU = new CPU6502(this);
-
-        BusDevices.Add(new RAM());
     }
 
     public byte Read(short address, bool _readonly = false)

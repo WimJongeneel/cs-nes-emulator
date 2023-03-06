@@ -2,10 +2,8 @@ using NesEmulator.CPU.AddressingModes;
 
 namespace NesEmulator.CPU.OPCodes;
 
-public interface OPCode
+public interface IOPCode
 {
     bool Execute(CPU6502 cpu);
-    IAddressingMode AddressingMode { get; }
     string Name { get; }
-    int Cycles { get; }
 }

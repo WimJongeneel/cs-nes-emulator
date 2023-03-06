@@ -1,17 +1,21 @@
 using NesEmulator.Bus;
+using NesEmulator.CPU.OPCodes;
+using NesEmulator.CPU.Instructions;
+using NesEmulator.CPU.AddressingModes;
 
 namespace NesEmulator.CPU;
 
 public class CPU6502
 {
     public IBus Bus { get; init; }
+    InstructionDictionary InstructionDictionary { get; } = new();
 
     public CPU6502(IBus bus)
     {
-        Bus = bus;
+        Bus = bus ?? throw new ArgumentNullException();
     }
 
-    #region CPU registers as on the actual hardware
+    #region CPU registers as present on the actual hardware
 
     public byte A { get; set; }
     public byte X { get; set; }
@@ -27,6 +31,9 @@ public class CPU6502
     public short AbsoluteAddress { get; set; }
     public short RelativeAddressOffset { get; set; }
     public short FetchCache { get; set; }
+    public IOPCode OPCode { get; set; } = new NOP();
+    public IAddressingMode AddressingMode { get; set; } = new IMP();
+    public int Cycles { get; set; }
 
     #endregion
 
@@ -41,6 +48,32 @@ public class CPU6502
         else Status &= (byte)~(byte)flag;
     }
 
-    
+    public void ClockSingleTick()
+    {
+        if(Cycles > 0)
+        {
+            Cycles--;
+            return;
+        }
+
+        SetStatusFlag(CPUFlag.U, true);
+
+        (OPCode, AddressingMode, Cycles) = InstructionDictionary.LookUp(Bus.Read(ProgramCounter));
+
+        ProgramCounter++;
+
+        var needExtraCycle1 = AddressingMode.Execute(this);
+        var needExtraCycle2 = OPCode.Execute(this);
+
+        if(needExtraCycle1 && needExtraCycle2) Cycles++;
+    }
+
+    public short FetchMemory()
+    {
+        if(!AddressingMode.SkipFetch)
+            FetchCache = Bus.Read(AbsoluteAddress);
+
+        return FetchCache;
+    }
 
 }
