@@ -30,7 +30,7 @@ public class CPU6502
 
     public short AbsoluteAddress { get; set; }
     public short RelativeAddressOffset { get; set; }
-    public short FetchCache { get; set; }
+    public byte FetchCache { get; set; }
     public IOPCode OPCode { get; set; } = new NOP();
     public IAddressingMode AddressingMode { get; set; } = new IMP();
     public int Cycles { get; set; }
@@ -68,7 +68,7 @@ public class CPU6502
         if(needExtraCycle1 && needExtraCycle2) Cycles++;
     }
 
-    public short FetchMemory()
+    public byte FetchMemory()
     {
         if(!AddressingMode.SkipFetch)
             FetchCache = Bus.Read(AbsoluteAddress);
