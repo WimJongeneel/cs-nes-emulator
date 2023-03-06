@@ -6,6 +6,14 @@ public class IZY : IAddressingMode
 
     public bool Execute(CPU6502 cpu)
     {
-        throw new NotImplementedException();
+        short pointerPointer = cpu.Bus.Read(cpu.ProgramCounter);
+        cpu.ProgramCounter++;
+
+        byte low = cpu.Bus.Read((short)((pointerPointer + cpu.Y) & 0x00FF));
+        short high = cpu.Bus.Read((short)((pointerPointer + cpu.Y + 1) & 0x00FF));
+
+        cpu.AbsoluteAddress = (short)((high << 8) | low);
+
+        return false;
     }
 }

@@ -6,6 +6,13 @@ public class ABY : IAddressingMode
 
     public bool Execute(CPU6502 cpu)
     {
-        throw new NotImplementedException();
+        byte low = cpu.Bus.Read(cpu.ProgramCounter);
+        cpu.ProgramCounter++;
+        short high = cpu.Bus.Read(cpu.ProgramCounter);
+        cpu.ProgramCounter++;
+
+        cpu.AbsoluteAddress = (short)(((high << 8) | low) + cpu.Y);
+
+        return ((cpu.AbsoluteAddress & 0xFF00) != (high << 8));
     }
 }
