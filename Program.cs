@@ -1,3 +1,9 @@
-﻿using NesEmulator.Bus;
+﻿using NESEmulator.Bus;
 
-var nes = new CpuBus();
+public class Program
+{
+    private static void Main(string[] args)
+    {
+        var nes = new CpuBus();
+    }
+}
