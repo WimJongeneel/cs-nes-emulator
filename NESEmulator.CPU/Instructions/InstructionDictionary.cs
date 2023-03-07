@@ -24,7 +24,7 @@ public class InstructionDictionary
         { 25, (new ORA(), new ABY(), 4) },
         { 29, (new ORA(), new ABX(), 4) },
         // { 30, (new ASL(), new ABX(), 7) },
-        // { 32, (new JSR(), new ABS(), 6) },
+        { 32, (new JSR(), new ABS(), 6) },
         { 33, (new AND(), new IZX(), 6) },
         // { 36, (new BIT(), new ZP0(), 3) },
         { 37, (new AND(), new ZP0(), 3) },
