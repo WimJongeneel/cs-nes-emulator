@@ -1,8 +1,10 @@
 ﻿using NESEmulator.Bus;
 
+namespace NESEmulator;
+
 public class Program
 {
-    private static void Main(string[] args)
+    public static void Main(string[] args)
     {
         var nes = new CpuBus();
     }
