@@ -8,7 +8,7 @@ namespace NESEmulator.CPU;
 public class CPU6502
 {
     public IBus Bus { get; init; }
-    InstructionDictionary InstructionDictionary { get; } = new();
+    InstructionTable InstructionTable { get; } = new();
 
     public CPU6502(IBus bus)
     {
@@ -31,8 +31,8 @@ public class CPU6502
     public short AbsoluteAddress { get; set; }
     public short RelativeAddressOffset { get; set; }
     public byte FetchCache { get; set; }
-    public IOPCode OPCode { get; set; } = new NOP();
-    public IAddressingMode AddressingMode { get; set; } = new IMP();
+    public IOPCode OPCode { get; set; } = new NOP_NoOp();
+    public IAddressingMode AddressingMode { get; set; } = new IMP_Implied();
     public int Cycles { get; set; }
 
     #endregion
@@ -58,7 +58,7 @@ public class CPU6502
 
         SetStatusFlag(CPUFlag.U, true);
 
-        (OPCode, AddressingMode, Cycles) = InstructionDictionary.LookUp(Bus.Read(ProgramCounter));
+        (OPCode, AddressingMode, Cycles) = InstructionTable.LookUp(Bus.Read(ProgramCounter));
 
         ProgramCounter++;
 
