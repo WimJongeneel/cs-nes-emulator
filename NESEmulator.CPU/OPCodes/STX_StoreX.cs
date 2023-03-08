@@ -6,7 +6,7 @@ public class STX_StoreX : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        cpu.Bus.write(cpu.AbsoluteAddress, cpu.X);
+        cpu.Bus.Write(cpu.AbsoluteAddress, cpu.X);
         return false;
     }
 }

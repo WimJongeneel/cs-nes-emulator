@@ -6,7 +6,7 @@ public class STA_StoreA : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        cpu.Bus.write(cpu.AbsoluteAddress, cpu.A);
+        cpu.Bus.Write(cpu.AbsoluteAddress, cpu.A);
         return false;
     }
 }

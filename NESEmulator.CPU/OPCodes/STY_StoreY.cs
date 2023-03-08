@@ -6,7 +6,7 @@ public class STY_StoreY : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        cpu.Bus.write(cpu.AbsoluteAddress, cpu.Y);
+        cpu.Bus.Write(cpu.AbsoluteAddress, cpu.Y);
         return false;
     }
 }

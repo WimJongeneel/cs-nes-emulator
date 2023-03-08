@@ -24,7 +24,7 @@ public class CpuBus : IBus
         return 0x00;
     }
 
-    public void write(short address, byte data)
+    public void Write(short address, byte data)
     {
         var device = BusDevices.FirstOrDefault(d => d.IsInAddressRange(address));
         if(device is not null) device.write(address, data);
