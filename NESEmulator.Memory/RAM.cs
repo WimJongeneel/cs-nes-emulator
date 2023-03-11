@@ -13,11 +13,11 @@ public class RAM : IBusDevice
 
     public byte read(short address)
     {
-        return Data[address];
+        return Data[address % 2048];
     }
 
     public void write(short address, byte data)
     {
-        Data[address] = data;
+        Data[address % 2048] = data;
     }
 }
