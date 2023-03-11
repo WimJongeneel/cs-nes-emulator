@@ -68,6 +68,8 @@ public class CPU6502
         if(needExtraCycle1 && needExtraCycle2) Cycles++;
     }
 
+    public bool IsComplete() => Cycles == 0;
+
     public byte FetchMemory()
     {
         if(!AddressingMode.SkipFetch)

@@ -4,7 +4,7 @@ namespace NESEmulator.Memory;
 
 public class RAM : IBusDevice
 {
-    byte[] Data = new byte[64 * 1024];
+    byte[] Data = new byte[2048];
 
     public bool IsInAddressRange(short address)
     {
