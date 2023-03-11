@@ -9,7 +9,7 @@ public class BVC_BranchIfOverflowClear : IOPCode
         if(cpu.GetStatusFlag(CPUFlag.V)) return false;
 
         cpu.Cycles++;
-        cpu.AbsoluteAddress = (short)(cpu.ProgramCounter + cpu.RelativeAddressOffset);
+        cpu.AbsoluteAddress = (ushort)(cpu.ProgramCounter + cpu.RelativeAddressOffset);
 
         if((cpu.AbsoluteAddress & 0xFF00) != (cpu.ProgramCounter & 0xFF00))
             cpu.Cycles++;

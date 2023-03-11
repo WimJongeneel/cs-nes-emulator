@@ -6,7 +6,7 @@ public class CMP_CompareA : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)cpu.A - (short)cpu.FetchMemory();
+        var result = (ushort)cpu.A - (ushort)cpu.FetchMemory();
 
         cpu.SetStatusFlag(CPUFlag.C, cpu.A >= cpu.FetchCache);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0x0000);

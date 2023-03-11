@@ -8,10 +8,10 @@ public class ABS_Absolute : IAddressingMode
     {
         byte low = cpu.Bus.Read(cpu.ProgramCounter);
         cpu.ProgramCounter++;
-        short high = cpu.Bus.Read(cpu.ProgramCounter);
+        ushort high = cpu.Bus.Read(cpu.ProgramCounter);
         cpu.ProgramCounter++;
 
-        cpu.AbsoluteAddress = (short)((high << 8) | low);
+        cpu.AbsoluteAddress = (ushort)((high << 8) | low);
 
         return false;
     }

@@ -6,7 +6,7 @@ public class LSR_LogicalShiftRight : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)((short)cpu.FetchMemory() >> 1);
+        var result = (ushort)((ushort)cpu.FetchMemory() >> 1);
 
         cpu.SetStatusFlag(CPUFlag.C, (cpu.FetchCache & 0x0001) > 0);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0);

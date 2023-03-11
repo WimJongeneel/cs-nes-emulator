@@ -9,7 +9,7 @@ public class BPL_BranchIfPositive : IOPCode
         if(cpu.GetStatusFlag(CPUFlag.N)) return false;
 
         cpu.Cycles++;
-        cpu.AbsoluteAddress = (short)(cpu.ProgramCounter + cpu.RelativeAddressOffset);
+        cpu.AbsoluteAddress = (ushort)(cpu.ProgramCounter + cpu.RelativeAddressOffset);
 
         if((cpu.AbsoluteAddress & 0xFF00) != (cpu.ProgramCounter & 0xFF00))
             cpu.Cycles++;

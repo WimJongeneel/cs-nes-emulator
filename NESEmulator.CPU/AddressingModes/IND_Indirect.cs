@@ -8,16 +8,16 @@ public class IND_Indirect : IAddressingMode
     {
         byte low = cpu.Bus.Read(cpu.ProgramCounter);
         cpu.ProgramCounter++;
-        short high = cpu.Bus.Read(cpu.ProgramCounter);
+        ushort high = cpu.Bus.Read(cpu.ProgramCounter);
         cpu.ProgramCounter++;
 
-        short pointer = (short)(((high << 8) | low) + cpu.Y);
+        ushort pointer = (ushort)(((high << 8) | low) + cpu.Y);
 
         // This if-statement emulates a NES hardware bug with moving past the zero page
         if (low == 0x00FF) 
-            cpu.AbsoluteAddress = (short)((cpu.Bus.Read((short)(pointer & 0xFF00)) << 8) | cpu.Bus.Read(pointer));
+            cpu.AbsoluteAddress = (ushort)((cpu.Bus.Read((ushort)(pointer & 0xFF00)) << 8) | cpu.Bus.Read(pointer));
         else 
-            cpu.AbsoluteAddress = (short)((cpu.Bus.Read((short)(pointer + 1)) << 8) | cpu.Bus.Read(pointer));
+            cpu.AbsoluteAddress = (ushort)((cpu.Bus.Read((ushort)(pointer + 1)) << 8) | cpu.Bus.Read(pointer));
 
         return false;
     }

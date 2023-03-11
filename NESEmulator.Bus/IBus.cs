@@ -2,6 +2,6 @@ namespace NESEmulator.Bus;
 
 public interface IBus
 {
-    void Write(short address, byte data);
-    byte Read(short address, bool _readonly = false);
+    void Write(ushort address, byte data);
+    byte Read(ushort address, bool _readonly = false);
 }

@@ -6,7 +6,7 @@ public class ROR_RotateRight : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)(((cpu.GetStatusFlag(CPUFlag.C) ? 1 : 0) << 7) | ((short)cpu.FetchMemory() >> 1));
+        var result = (ushort)(((cpu.GetStatusFlag(CPUFlag.C) ? 1 : 0) << 7) | ((ushort)cpu.FetchMemory() >> 1));
 
         cpu.SetStatusFlag(CPUFlag.C, (cpu.FetchCache & 0x01) > 0);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0xFF00) == 0);

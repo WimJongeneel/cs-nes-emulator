@@ -6,7 +6,7 @@ public class CPX_CompareX : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)cpu.X - (short)cpu.FetchMemory();
+        var result = (ushort)cpu.X - (ushort)cpu.FetchMemory();
 
         cpu.SetStatusFlag(CPUFlag.C, cpu.X >= cpu.FetchCache);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0x0000);

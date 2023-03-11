@@ -21,15 +21,15 @@ public class CPU6502
     public byte X { get; set; }
     public byte Y { get; set; }
     public byte StackPointer { get; set; }
-    public short ProgramCounter { get; set; }
+    public ushort ProgramCounter { get; set; }
     public byte Status { get; set; }
 
     #endregion
 
     #region Internal CPU state for the emulation
 
-    public short AbsoluteAddress { get; set; }
-    public short RelativeAddressOffset { get; set; }
+    public ushort AbsoluteAddress { get; set; }
+    public ushort RelativeAddressOffset { get; set; }
     public byte FetchCache { get; set; }
     public IOPCode OPCode { get; set; } = new NOP_NoOp();
     public IAddressingMode AddressingMode { get; set; } = new IMP_Implied();

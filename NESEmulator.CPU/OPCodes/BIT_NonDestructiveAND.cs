@@ -6,7 +6,7 @@ public class BIT_NonDestructiveAND : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)(cpu.A & cpu.FetchMemory());
+        var result = (ushort)(cpu.A & cpu.FetchMemory());
 
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0x00);
         cpu.SetStatusFlag(CPUFlag.N, (cpu.FetchCache & (1 << 7)) > 0);

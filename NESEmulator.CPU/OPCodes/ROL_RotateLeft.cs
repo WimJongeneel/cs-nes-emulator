@@ -6,7 +6,7 @@ public class ROL_RotateLeft : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)(((short)cpu.FetchMemory() << 1) | (cpu.GetStatusFlag(CPUFlag.C) ? 1 : 0));
+        var result = (ushort)(((ushort)cpu.FetchMemory() << 1) | (cpu.GetStatusFlag(CPUFlag.C) ? 1 : 0));
 
         cpu.SetStatusFlag(CPUFlag.C, (result & 0xFF00) > 0);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0xFF00) == 0);

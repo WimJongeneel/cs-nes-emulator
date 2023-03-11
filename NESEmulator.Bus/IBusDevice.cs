@@ -2,7 +2,7 @@ namespace NESEmulator.Bus;
 
 public interface IBusDevice
 {
-    bool IsInAddressRange(short address);
-    void write(short address, byte data);
-    byte read(short address);
+    bool IsInAddressRange(ushort address);
+    void write(ushort address, byte data);
+    byte read(ushort address);
 }

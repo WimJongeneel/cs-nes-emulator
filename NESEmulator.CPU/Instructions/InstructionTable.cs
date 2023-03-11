@@ -5,7 +5,7 @@ namespace NESEmulator.CPU.Instructions;
 
 public class InstructionTable
 {
-    Dictionary<short, Instruction> Instructions = new()
+    Dictionary<ushort, Instruction> Instructions = new()
     {
         // { 0, (new BRK(), new IMM(), 7) },
         { 1, (new ORA_BitwiseLogicOR(), new IZX_IndirectWithXOffset(), 6) },
@@ -160,7 +160,7 @@ public class InstructionTable
         { 254, (new INC_IncrementAtMemoryAddress(), new ABX_AbsoluteWithXOffset(), 7) },
     };
 
-    public Instruction LookUp(short op)
+    public Instruction LookUp(ushort op)
     {
         if(Instructions.ContainsKey(op)) return Instructions[op];
         return (new NOP_NoOp(), new IMP_Implied(), 1);

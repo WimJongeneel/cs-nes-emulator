@@ -6,7 +6,7 @@ public class CPY_CompareY : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        var result = (short)cpu.Y - (short)cpu.FetchMemory();
+        var result = (ushort)cpu.Y - (ushort)cpu.FetchMemory();
 
         cpu.SetStatusFlag(CPUFlag.C, cpu.Y >= cpu.FetchCache);
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0x0000);

@@ -6,7 +6,7 @@ public class INC_IncrementAtMemoryAddress : IOPCode
 
     public bool Execute(CPU6502 cpu)
     {
-        short result = (short)(cpu.FetchMemory() + 1);
+        ushort result = (ushort)(cpu.FetchMemory() + 1);
         cpu.Bus.Write(cpu.AbsoluteAddress, (byte)(result & 0x00FF));
 
         cpu.SetStatusFlag(CPUFlag.Z, (result & 0x00FF) == 0x0000);
