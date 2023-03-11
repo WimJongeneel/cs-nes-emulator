@@ -23,7 +23,7 @@ public class CPUBus : IBus
         BusDevices.Add(PPU);
     }
 
-    public void InsertCartridge(CartridgeReader cartridge)
+    public void InsertCartridge(Cartridge.Cartridge cartridge)
     {
         BusDevices.Insert(0, cartridge.GetCPUAdapter());
         PPU.Bus.BusDevices.Insert(0, cartridge.GetPPUAdapter());
