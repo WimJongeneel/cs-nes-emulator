@@ -4,7 +4,7 @@ namespace NESEmulator.PPU;
 
 public class PPU2C02 : IBusDevice
 {
-    IBus Bus { get; init; }
+    public IBus Bus { get; init; }
     byte[] Data { get; } = new byte[8];
 
     public PPU2C02(IBus bus)

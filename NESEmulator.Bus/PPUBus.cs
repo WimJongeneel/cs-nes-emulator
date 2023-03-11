@@ -1,8 +1,14 @@
+using NESEmulator.Memory;
+
 namespace NESEmulator.Bus;
 
 public class PPUBus : IBus
 {
-    private List<IBusDevice> BusDevices { get; } = new();
+    public List<IBusDevice> BusDevices { get; } = new()
+    {
+        new NameTables(),
+        new PaletTable()
+    };
 
     public byte Read(ushort address, bool _readonly = false)
     {

@@ -2,6 +2,7 @@ using NESEmulator.CPU;
 using NESEmulator.Memory;
 using NESEmulator.Controller;
 using NESEmulator.PPU;
+using NESEmulator.Cartridge;
 
 namespace NESEmulator.Bus;
 
@@ -10,7 +11,7 @@ public class CPUBus : IBus
 
     public CPU6502 CPU { get; init; }
     public PPU2C02 PPU { get; } = new(new PPUBus());
-    private List<IBusDevice> BusDevices { get; } = new()
+    public List<IBusDevice> BusDevices { get; } = new()
     {
         new RAM(),
         new NESKeyboardController(),
@@ -20,6 +21,12 @@ public class CPUBus : IBus
     {
         CPU = new CPU6502(this);
         BusDevices.Add(PPU);
+    }
+
+    public void InsertCartridge(CartridgeReader cartridge)
+    {
+        BusDevices.Insert(0, cartridge.GetCPUAdapter());
+        PPU.Bus.BusDevices.Insert(0, cartridge.GetPPUAdapter());
     }
 
     public byte Read(ushort address, bool _readonly = false)
