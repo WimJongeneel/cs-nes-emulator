@@ -25,8 +25,8 @@ public class CPUBus : IBus
 
     public void InsertCartridge(Cartridge.Cartridge cartridge)
     {
-        BusDevices.Insert(0, cartridge.GetCPUAdapter());
-        PPU.Bus.BusDevices.Insert(0, cartridge.GetPPUAdapter());
+        BusDevices.Insert(0, cartridge.CPUAdapter);
+        PPU.Bus.BusDevices.Insert(0, cartridge.PPUAdapter);
     }
 
     public byte Read(ushort address, bool _readonly = false)

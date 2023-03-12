@@ -5,22 +5,18 @@ namespace NESEmulator.Cartridge;
 
 public class Cartridge
 {
-    public byte[] ProgramMemory { get; init; } = Array.Empty<byte>();
-    public byte[] CharacterMemory { get; init; } = Array.Empty<byte>();
+    public byte[] ProgramMemory { get; init; }
+    public byte[] CharacterMemory { get; init; }
     public IMapper Mapper { get; init; }
+    public IBusDevice PPUAdapter { get; init; }
+    public IBusDevice CPUAdapter { get; init; }
 
-    public Cartridge(IMapper mapper)
+    public Cartridge(IMapper mapper, byte[] programMemory, byte[] characterMemory)
     {
-        Mapper = mapper;
-    }
-
-    public IBusDevice GetPPUAdapter()
-    {
-        return new PPUAdapter(this);
-    }
-
-    public IBusDevice GetCPUAdapter()
-    {
-        return new CPUAdapter(this);
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        PPUAdapter = new PPUAdapter(this);
+        CPUAdapter = new CPUAdapter(this);
+        ProgramMemory = programMemory ?? Array.Empty<byte>();
+        CharacterMemory = characterMemory ?? Array.Empty<byte>();
     }
 }

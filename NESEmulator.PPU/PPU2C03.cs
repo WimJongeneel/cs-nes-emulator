@@ -1,11 +1,14 @@
 using NESEmulator.Bus;
+using NESEmulator.PPU.Registers;
 
 namespace NESEmulator.PPU;
 
 public class PPU2C02 : IBusDevice
 {
     public IBus Bus { get; init; }
-    byte[] Data { get; } = new byte[8];
+    PPUStatusRegister Status { get; init; } = new PPUStatusRegister();
+    PPUMaskRegister Mask { get; init; } = new PPUMaskRegister();
+    PPUControlRegister Control { get; init; } = new PPUControlRegister();
 
     public PPU2C02(IBus bus)
     {
@@ -24,11 +27,14 @@ public class PPU2C02 : IBusDevice
 
     public void write(ushort address, byte data)
     {
-        Data[address & 0x0007] = data;
+        // Data[address & 0x0007] = data;
+
+
     }
 
     public byte read(ushort address)
     {
-        return Data[address & 0x0007];
+        // return Data[address & 0x0007];
+        return 0;
     }
 }
