@@ -16,12 +16,12 @@ public class CPUAdapter : IBusDevice
         return address >= 0x8000 && address <= 0xFFFF;
     }
 
-    public byte read(ushort address)
+    public byte Read(ushort address)
     {
         return Cartridge.ProgramMemory[Cartridge.Mapper.MapCPUReadAddress(address)];
     }
 
-    public void write(ushort address, byte data)
+    public void Write(ushort address, byte data)
     {
         var mapped = Cartridge.Mapper.MapCPUWriteAddress(out bool shouldUpdateROM, address, data);
         if(shouldUpdateROM) Cartridge.ProgramMemory[mapped] = data;

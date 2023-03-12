@@ -13,13 +13,13 @@ public class NESKeyboardController : IBusDevice
         return address >= 0x4016 && address <= 0x4017;
     }
 
-    public byte read(ushort address)
+    public byte Read(ushort address)
     {
         // var left = (GetKeyState(37) & 0x8000) > 0;
         return 0;
     }
 
-    public void write(ushort address, byte data)
+    public void Write(ushort address, byte data)
     {
         // you can't write to the controller
     }

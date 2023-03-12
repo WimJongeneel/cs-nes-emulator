@@ -16,12 +16,12 @@ public class PPUAdapter : IBusDevice
         return address >= 0x0000 && address <= 0x1FFF;
     }
 
-    public byte read(ushort address)
+    public byte Read(ushort address)
     {
         return Cartridge.CharacterMemory[Cartridge.Mapper.MapPPUReadAddress(address)];
     }
 
-    public void write(ushort address, byte data)
+    public void Write(ushort address, byte data)
     {
         var mapped = Cartridge.Mapper.MapPPUWriteAddress(out bool shouldUpdateROM, address, data);
         if(shouldUpdateROM) Cartridge.CharacterMemory[mapped] = data;
