@@ -1,4 +1,5 @@
 using NESEmulator.Cartridge.Mappers;
+using static NESEmulator.Memory.NameTables;
 
 namespace NESEmulator.Cartridge;
 
@@ -34,7 +35,8 @@ public static class CartridgeReader
         return new Cartridge(
             new Mapper00(header.ProgramROMChunks, header.CharacterROMChunks),
             br.ReadBytes(header.ProgramROMChunks * 16384),
-            br.ReadBytes(header.CharacterROMChunks * 8192)
+            br.ReadBytes(header.CharacterROMChunks * 8192),
+            ((byte)(header.Mapper1 & 0x01) ) > 0 ? MirrorModeEnum.Vertical : MirrorModeEnum.Horizontal
         );
     }
 }

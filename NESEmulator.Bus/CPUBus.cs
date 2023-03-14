@@ -1,3 +1,4 @@
+using System.Linq;
 using NESEmulator.CPU;
 using NESEmulator.Memory;
 using NESEmulator.Controller;
@@ -27,6 +28,7 @@ public class CPUBus : IBus
     {
         BusDevices.Insert(0, cartridge.CPUAdapter);
         PPU.Bus.BusDevices.Insert(0, cartridge.PPUAdapter);
+        PPU.Bus.BusDevices.OfType<NameTables>().Select(nt => nt.MirrorMode = cartridge.MirrorMode);
     }
 
     public byte Read(ushort address, bool _readonly = false)
