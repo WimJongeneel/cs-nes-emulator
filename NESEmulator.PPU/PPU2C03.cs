@@ -103,7 +103,7 @@ public class PPU2C02 : IBusDevice
                 break;
             case 7:
                 Bus.Write(Address, data);
-                Address++;
+                Address += (ushort)(Control.IncrementMode ? 32 : 1);
                 break;
         }
     }
@@ -122,7 +122,7 @@ public class PPU2C02 : IBusDevice
                 result = ReadBuffer;
                 ReadBuffer = Bus.Read(Address);
                 if(Address > 0x3F00) result = ReadBuffer;
-                Address++;
+                Address += (ushort)(Control.IncrementMode ? 32 : 1);
                 break;
         }
 
