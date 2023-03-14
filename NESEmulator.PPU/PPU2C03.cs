@@ -9,9 +9,9 @@ public class PPU2C02 : IBusDevice
 
     #region Registers as present on the actual hardware
 
-    PPUStatusRegister Status { get; init; } = new PPUStatusRegister();
-    PPUMaskRegister Mask { get; init; } = new PPUMaskRegister();
-    PPUControlRegister Control { get; init; } = new PPUControlRegister();
+    PPUStatusRegister Status { get; } = new();
+    PPUMaskRegister Mask { get; } = new();
+    PPUControlRegister Control { get; } = new();
 
     #endregion
 
