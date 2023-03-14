@@ -6,12 +6,31 @@ namespace NESEmulator.PPU;
 public class PPU2C02 : IBusDevice
 {
     public IBus Bus { get; init; }
+
+    #region Registers as present on the actual hardware
+
     PPUStatusRegister Status { get; init; } = new PPUStatusRegister();
     PPUMaskRegister Mask { get; init; } = new PPUMaskRegister();
     PPUControlRegister Control { get; init; } = new PPUControlRegister();
+
+    #endregion
+
+    #region Internal state for emulating reading addresses and data
+
     bool WriteAddressLatch { get; set; }
     byte ReadBuffer { get; set; }
     ushort Address { get; set; }
+
+    #endregion
+
+    #region Internal state for rendering
+
+    int ScanLineY { get; set; }
+    int CycleX { get; set; }
+    bool IsFrameComplete { get; set; }
+    public bool RequestingNonMaskableInterrupt { get; set; }
+
+    #endregion
 
     public PPU2C02(IBus bus)
     {
@@ -20,7 +39,39 @@ public class PPU2C02 : IBusDevice
 
     public void ClockSingleTick()
     {
+        var IsFirstCycleOfNewFrame = ScanLineY == -1 && CycleX == 1;
+        if (IsFirstCycleOfNewFrame)
+        {
+            Status.VerticalBlank = false;
+            IsFrameComplete = false;
+        }
 
+        var IsEndOfVisibleFrame = ScanLineY == 241 && CycleX == 1;
+        if (IsEndOfVisibleFrame)
+        {
+            Status.VerticalBlank = true;
+            if(Control.EnableNMI)
+            {
+                RequestingNonMaskableInterrupt = true;
+            }
+        }
+
+        MoveNextTick();
+
+        void MoveNextTick()
+        {
+            CycleX++;
+            if (CycleX >= 341)
+            {
+                CycleX = 0;
+                ScanLineY++;
+                if (ScanLineY >= 261)
+                {
+                    ScanLineY = -1;
+                    IsFrameComplete = true;
+                }
+            }
+        }
     }
 
     public bool IsInAddressRange(ushort address)

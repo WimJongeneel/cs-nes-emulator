@@ -78,4 +78,41 @@ public class CPU6502
         return FetchCache;
     }
 
+    public void NonMaskableInterrupt()
+    {
+        Bus.Write((ushort)(0x0100 + StackPointer--), (byte)((ProgramCounter >> 8) & 0x00F));
+        Bus.Write((ushort)(0x0100 + StackPointer--), (byte)(ProgramCounter & 0x00F));
+        
+        SetStatusFlag(CPUFlag.B, false);
+        SetStatusFlag(CPUFlag.U, true);
+        SetStatusFlag(CPUFlag.I, true);
+
+        Bus.Write((ushort)(0x0100 + StackPointer--), Status);
+
+        AbsoluteAddress = 0xFFFA;
+        ushort low = Bus.Read(AbsoluteAddress);
+        ushort high = Bus.Read((ushort)(AbsoluteAddress + 1));
+        ProgramCounter = (ushort)((high << 8) | low);
+
+        Cycles = 8;
+    }
+
+    public void RequestInterrupt()
+    {
+        Bus.Write((ushort)(0x0100 + StackPointer--), (byte)((ProgramCounter >> 8) & 0x00F));
+        Bus.Write((ushort)(0x0100 + StackPointer--), (byte)(ProgramCounter & 0x00F));
+        
+        SetStatusFlag(CPUFlag.B, false);
+        SetStatusFlag(CPUFlag.U, true);
+        SetStatusFlag(CPUFlag.I, true);
+
+        Bus.Write((ushort)(0x0100 + StackPointer--), Status);
+
+        AbsoluteAddress = 0xFFFE;
+        ushort low = Bus.Read(AbsoluteAddress);
+        ushort high = Bus.Read((ushort)(AbsoluteAddress + 1));
+        ProgramCounter = (ushort)((high << 8) | low);
+
+        Cycles = 7;
+    }
 }

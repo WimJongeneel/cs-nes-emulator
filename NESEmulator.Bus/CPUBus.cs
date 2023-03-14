@@ -51,6 +51,12 @@ public class CPUBus : IBus
             PPU.ClockSingleTick();
             PPU.ClockSingleTick();
             PPU.ClockSingleTick();
+
+            if(PPU.RequestingNonMaskableInterrupt)
+            {
+                CPU.NonMaskableInterrupt();
+                PPU.RequestingNonMaskableInterrupt = false;
+            }
         }
         while(!CPU.IsComplete());
     }
