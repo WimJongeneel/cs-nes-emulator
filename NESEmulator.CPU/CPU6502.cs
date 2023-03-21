@@ -16,25 +16,21 @@ public class CPU6502
     }
 
     #region CPU registers as present on the actual hardware
-
     public byte A { get; set; }
     public byte X { get; set; }
     public byte Y { get; set; }
     public byte StackPointer { get; set; }
     public ushort ProgramCounter { get; set; }
     public byte Status { get; set; }
-
     #endregion
 
     #region Internal CPU state for the emulation
-
     public ushort AbsoluteAddress { get; set; }
     public ushort RelativeAddressOffset { get; set; }
     public byte FetchCache { get; set; }
     public IOPCode OPCode { get; set; } = new NOP_NoOp();
     public IAddressingMode AddressingMode { get; set; } = new IMP_Implied();
     public int Cycles { get; set; }
-
     #endregion
 
     public bool GetStatusFlag(CPUFlag flag)

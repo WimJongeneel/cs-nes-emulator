@@ -47,4 +47,41 @@ public record VRAMAddress
         uint mask = ((((uint)1) << size) - 1) << pos;
         return (word & mask) >> pos;
     }
+
+    public void IncrementScrollX()
+    {
+        if(CoarseX == 31)
+        {
+            CoarseX = 0;
+            NametableX = ~NametableX;
+        }
+        else
+        {
+            CoarseX++;
+        }
+    }
+
+    public void IncrementScrollY()
+    {
+        if(FineY < 7)
+        {
+            FineY++;
+            return;
+        }
+
+        FineY = 0;
+        if(CoarseY == 29)
+        {
+            CoarseY = 0;
+            NametableY = ~NametableY;
+        }
+        else if(CoarseY == 31)
+        {
+            CoarseY = 0;
+        }
+        else
+        {
+            CoarseY++;
+        }
+    }
 }

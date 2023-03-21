@@ -8,34 +8,26 @@ public class PPU2C02 : IBusDevice
     public IBus Bus { get; init; }
 
     #region Registers as present on the actual hardware
-
     PPUStatusRegister Status { get; } = new();
     PPUMaskRegister Mask { get; } = new();
     PPUControlRegister Control { get; } = new();
-
     #endregion
 
     #region Internal state for emulating reading addresses and data
-
     bool WriteAddressLatch { get; set; }
     byte ReadBuffer { get; set; }
-
     #endregion
 
     #region Internal state for rendering
-
     int ScanLineY { get; set; }
     int CycleX { get; set; }
     bool IsFrameComplete { get; set; }
     public bool RequestingNonMaskableInterrupt { get; set; }
+    byte FineXScrolling { get; set; }
     VRAMAddress VRAMAddress { get; } = new();
     VRAMAddress TRAMAddress { get; } = new();
-    byte FineXScrolling { get; set; }
-    byte NextBackgroundTileId { get; set; }
-    byte NextBackgroundTileAttribute { get; set; }
-    byte NextBackgroundTileLSB { get; set; }
-    byte NextBackgroundTileMSB { get; set; }
-
+    NextTileBuffer NextTileBuffer { get; set; } = new();
+    BackgroundShifter BackgroundShifter { get; set; } = new();
     #endregion
 
     public PPU2C02(IBus bus)
@@ -58,16 +50,38 @@ public class PPU2C02 : IBusDevice
             var shouldExtractTileData = (CycleX >= 2 && CycleX < 258) || (CycleX >= 321 && CycleX < 338);
             if(shouldExtractTileData)
             {
+                UpdateShifters();
+                // This logic loads various bits of the data to render the next tile during the cycles for rendering current tile
+                // The bitwise logic here is wild, but just mimics the hardware and memory layout of the NES
                 switch((CycleX - 1) % 8)
                 {
-                    // Fetching of tiles and attributes goes here
                     case 0:
+                        LoadBackgroundShifters();
+                        NextTileBuffer.NextBackgroundTileId = Bus.Read((ushort)(0x2000 | (VRAMAddress.Value & 0x0FFF)));
                         break;
                     case 2:
+                        NextTileBuffer.NextBackgroundTileAttribute = Bus.Read((ushort)(
+                            0x23C0 | (VRAMAddress.NametableY << 11) | (VRAMAddress.NametableX << 10) | ((VRAMAddress.CoarseY >> 2) << 3) | (VRAMAddress.CoarseX >> 2)
+                        ));
+                        if((VRAMAddress.CoarseY & 0x02) > 0)
+                        {
+                            NextTileBuffer.NextBackgroundTileAttribute >>= 4;
+                        }
+                        if((VRAMAddress.CoarseX & 0x02) > 0)
+                        {
+                            NextTileBuffer.NextBackgroundTileAttribute >>= 2;
+                        }
+                        NextTileBuffer.NextBackgroundTileAttribute &= 0x03;
                         break;
                     case 4:
+                        NextTileBuffer.NextBackgroundTileLSB = Bus.Read((ushort)(
+                            ((Control.PatternBackground ? 1 : 0) << 12) + (NextTileBuffer.NextBackgroundTileId << 4) + VRAMAddress.FineY
+                        ));
                         break;
                     case 6:
+                    NextTileBuffer.NextBackgroundTileMSB = Bus.Read((ushort)(
+                            ((Control.PatternBackground ? 1 : 0) << 12) + (NextTileBuffer.NextBackgroundTileId << 4) + VRAMAddress.FineY + 8
+                        ));
                         break;
                     case 7:
                         IncrementScrollX();
@@ -84,6 +98,7 @@ public class PPU2C02 : IBusDevice
             var isAfterEndOfScanline = CycleX == 257;
             if(isAfterEndOfScanline)
             {
+                LoadBackgroundShifters();
                 ResetXAddress();
             }
 
@@ -107,19 +122,11 @@ public class PPU2C02 : IBusDevice
         MoveNextTick();
     }
 
-    void IncrementScrollX()
+    void UpdateShifters()
     {
-        if(Mask.RenderBackground || Mask.RenderSprites)
+        if(Mask.RenderBackground)
         {
-            if(VRAMAddress.CoarseX == 31)
-            {
-                VRAMAddress.CoarseX = 0;
-                VRAMAddress.NametableX = ~VRAMAddress.NametableX;
-            }
-            else
-            {
-                VRAMAddress.CoarseX++;
-            }
+            BackgroundShifter.Shift();
         }
     }
 
@@ -127,27 +134,15 @@ public class PPU2C02 : IBusDevice
     {
         if(Mask.RenderBackground || Mask.RenderSprites)
         {
-            if(VRAMAddress.FineY < 7)
-            {
-                VRAMAddress.FineY++;
-            }
-            else
-            {
-                VRAMAddress.FineY = 0;
-                if(VRAMAddress.CoarseY == 29)
-                {
-                    VRAMAddress.CoarseY = 0;
-                    VRAMAddress.NametableY = ~VRAMAddress.NametableY;
-                }
-                else if(VRAMAddress.CoarseY == 31)
-                {
-                    VRAMAddress.CoarseY = 0;
-                }
-                else
-                {
-                    VRAMAddress.CoarseY++;
-                }
-            }
+            VRAMAddress.IncrementScrollY();
+        }
+    }
+
+    public void IncrementScrollX()
+    {
+        if(Mask.RenderBackground || Mask.RenderSprites)
+        {
+            VRAMAddress.IncrementScrollX();
         }
     }
 
@@ -168,6 +163,26 @@ public class PPU2C02 : IBusDevice
             VRAMAddress.CoarseY = TRAMAddress.CoarseY;
             VRAMAddress.FineY = TRAMAddress.FineY;
         }
+    }
+
+    void LoadBackgroundShifters()
+    {
+        BackgroundShifter.PatternLow = (ushort)((BackgroundShifter.PatternLow & 0xFF00) | NextTileBuffer.NextBackgroundTileLSB);
+        BackgroundShifter.PatternHigh= (ushort)((BackgroundShifter.PatternHigh & 0xFF00) | NextTileBuffer.NextBackgroundTileMSB);
+
+        BackgroundShifter.AttributeLow = (ushort)((BackgroundShifter.AttributeLow & 0xFF00) | ((NextTileBuffer.NextBackgroundTileAttribute & 0b01) > 0 ? 0xFF : 0x00));
+        BackgroundShifter.AttributeHigh = (ushort)((BackgroundShifter.AttributeHigh & 0xFF00) | ((NextTileBuffer.NextBackgroundTileAttribute & 0b10) > 0 ? 0xFF : 0x00));
+    }
+
+    void UpdateBackgroundShifters()
+    {
+        if(!Mask.RenderBackground) return;
+
+        BackgroundShifter.PatternLow <<= 1;
+        BackgroundShifter.PatternHigh <<= 1;
+
+        BackgroundShifter.AttributeLow <<= 1;
+        BackgroundShifter.AttributeHigh <<= 1;
     }
 
     void MoveNextTick()
